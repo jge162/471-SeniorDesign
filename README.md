@@ -45,11 +45,11 @@ arduino.write(b'13,0')
 
 # Close the serial port
 arduino.close()
-You would need to install pyserial library using pip install pyserial
+# You would need to install pyserial library using pip install pyserial
 
-This code snippet uses the pyserial library to communicate with the Arduino over a serial connection. The Serial class is used to open a connection to the Arduino on the specified serial port (in this case, COM3) at a baud rate of 9600. The code sends a command to the Arduino to turn on an LED connected to pin 13, waits for the command to be executed, and then sends a command to turn off the LED.
+# This code snippet uses the pyserial library to communicate with the Arduino over a serial connection. The Serial class is used to open a connection to the Arduino on the specified serial port (in this case, COM3) at a baud rate of 9600. The code sends a command to the Arduino to turn on an LED connected to pin 13, waits for the command to be executed, and then sends a command to turn off the LED.
 
-It is important to note that, in order for the Arduino to receive the commands from the Coral board, you will need to have the appropriate code loaded on the Arduino that listens for serial commands and controls the GPIO pins accordingly. The above code is just for sending the commands from Coral Dev board to Arduino.
+# It is important to note that, in order for the Arduino to receive the commands from the Coral board, you will need to have the appropriate code loaded on the Arduino that listens for serial commands and controls the GPIO pins accordingly. The above code is just for sending the commands from Coral Dev board to Arduino.
 
 
 
