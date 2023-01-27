@@ -22,7 +22,7 @@ r = requests.post(url, data=data)
 
 # Print the response from the Coral board
 print(r.text)
-Note that you will need to replace <coral-board-ip-address> with the IP address of your Coral development board. Also, you may also need to install requests library using pip install requests
+# Note that you will need to replace <coral-board-ip-address> with the IP address of your Coral development board. Also, you may also need to install requests library using pip install requests
 
 # This code snippet uses the requests library to send a POST request to the Coral board with the tflite file as the data. The response from the Coral board # is then printed to the console.
 ```
