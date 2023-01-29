@@ -1,14 +1,4 @@
-"""
-Yes, it is possible to use PyCoral to control the Google
-Coral Dev Board in PyCharm. PyCoral is a Python library
-that provides a convenient interface for interacting with
-the Google Coral devices, including the Dev Board. To use
-PyCoral in PyCharm, you will first need to install the library,
-and then import it into your Python script. From there, you can
-use the library's functions and classes to interact with the
-Dev Board, such as performing inferences on TensorFlow Lite models
-or controlling the device's peripherals.
-"""
+
 import pycoral.coral as coral
 import numpy as np
 import tensorflow as tf
@@ -51,10 +41,3 @@ print(output_data)
 
 scp model.tflite <username>@<ip-address-of-coral-dev-board>:/path/to/model.tflite
 
-"""
-Then you can use the above example code to load the model and perform inferences 
-on the Dev Board. It's worth noting that, the Edge TPU provides faster
- inferencing than the host machine, so loading the model on the Edge TPU 
- would be beneficial if you are doing real-time inferencing or if the model is 
- too large to fit in the host machine's memory.
-"""
