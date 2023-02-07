@@ -80,3 +80,21 @@ while True:
         print("recycling")
     else:
        
+"""
+This code will control the stepper motors of an Arduino board. In order to use this code, you need to have the following components:
+
+An Arduino board
+Stepper motors connected to the Arduino
+A USB cable to connect the Arduino to your computer
+To run this code, you will need to do the following:
+
+Install the Arduino Integrated Development Environment (IDE) on your computer, 
+if you don't have it already. You can download the Arduino IDE from the official Arduino website.
+Connect the Arduino to your computer using the USB cable.
+Open the Arduino IDE and load the code you provided in a new sketch.
+Compile and upload the code to the Arduino board.
+Once you have done that, you can send commands to the Arduino board through the Serial Monitor in 
+the Arduino IDE. The available commands are: "trash", "compost", and "recycle". These commands will 
+cause the stepper motors to move in a certain direction and complete a specific action, as defined 
+in the code.
+"""
