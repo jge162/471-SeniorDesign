@@ -5,7 +5,7 @@ import serial
 import time
 
 # Load the TensorFlow Lite object detection model
-interpreter = tf.lite.Interpreter(model_path="detection_model.tflite")
+interpreter = tf.lite.Interpreter(model_path="model_edgetpu.tflite")
 interpreter.allocate_tensors()
 
 # Get the input and output tensors from the model
@@ -20,9 +20,9 @@ ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # Define the class labels and the corresponding trigger actions
 labels = {
-    'dog': b'A',
-    'cat': b'B',
-    'car': b'C'
+    'compost': b'compost',
+    'waste': b'waste',
+    'recyling': b'recyling'
 }
 
 while True:
