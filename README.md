@@ -11,3 +11,19 @@ https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-
 
 
 ![71PvKR7TpUL _AC_SL1500_](https://user-images.githubusercontent.com/31228460/215386467-6c2f1c0b-feda-44ed-afb5-6997da802b85.jpg)
+
+
+if  :
+  ser = serial.Serial('/dev/ttyACM0', 9600)
+  ser.write(b'Waste')
+  ser.close()(edited)
+elif :
+  ser = serial.Serial('/dev/ttyACM0', 9600)
+  ser.write(b'Recyling')
+  ser.close()(edited)
+elif :
+  ser = serial.Serial('/dev/ttyACM0', 9600)
+  ser.write(b'Compost')
+  ser.close()(edited)
+else
+    return 0;
