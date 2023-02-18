@@ -25,6 +25,7 @@ jobs:
        sudo apt-get install python3
        echo "Install PyGithub module"
        pip3 install PyGithub
+       pip3 install pycoral 
       shell: bash
     - run: |
         echo "Run, Build Application using scripts"
