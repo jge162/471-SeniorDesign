@@ -1,0 +1,36 @@
+# run file to verify it compiles with no errors 
+# this code runs Master_script.py script to verify
+# all scripts running fine when called
+name: Analyze (python)
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - run: |
+       echo "Install required dependencies"
+       sudo apt-get update
+       sudo apt-get install python3
+       echo "Install PyGithub module"
+       pip3 install PyGithub
+      shell: bash
+    - run: |
+        echo "Run, Build Application using scripts"
+        python3 -c "
+        scripts = [ './WORKING_VERSION_OF_PYTHON_CODE.py']
+        for script in scripts:
+            with open(script, 'r') as file:
+                exec(file.read())
+        "
