@@ -1,12 +1,14 @@
 # EGCP471
 Senior design project
 
-## connect board to wifi `nmtui`
-## check wifi connection `nmcli connection show`
-## can also pin `ping google.com`
-## load file to board `mdt push PycharmProjects/InferenceCoral/main.py`
-## runf script on board `python3 main.py`
-## install rpi `sudo apt-get install python-rpi.gpio python3-rpi.gpio`
+connect board to wifi `nmtui`
+check wifi connection `nmcli connection show`
+can also pin `ping google.com`
+load file to board `mdt push PycharmProjects/InferenceCoral/main.py`
+runf script on board `python3 main.py`
+install rpi `sudo apt-get install python-rpi.gpio python3-rpi.gpio`
+`sudo apt-get update && sudo apt-get install python3-tk`
+
 
 python3 -m pip install python-periphery
 
