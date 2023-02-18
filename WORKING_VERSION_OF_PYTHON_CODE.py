@@ -54,7 +54,7 @@ while True:
         print('%s %.5f' % (class_label, confidence))  # prints the class label and confidence score
 
     # Display the frame with the confidence value
-    cv2.putText(frame, "Confidence: %.2f" % confidence, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,
+    cv2.putText(frame, "Confidence: %.2f" % confidence, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255),2)
     cv2.imshow('Object Detection', frame)
 
     # Exit on 'q' key
