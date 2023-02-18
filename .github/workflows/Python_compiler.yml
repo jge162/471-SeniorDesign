@@ -26,6 +26,7 @@ jobs:
        echo "Install PyGithub module"
        pip3 install PyGithub
        pip3 install pycoral 
+       pip3 install opencv-python
       shell: bash
     - run: |
         echo "Run, Build Application using scripts"
