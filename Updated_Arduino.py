@@ -59,7 +59,7 @@ def main():
                 ser.close()
 
             elif class_label == 'Waste' and confidence > 0.5:
-                ser.write(b'recycle')
+                ser.write(b'composting')
                 ser.close()
 
             elif class_label == 'Compost' and confidence > 0.5:
