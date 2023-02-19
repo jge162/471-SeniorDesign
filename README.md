@@ -1,5 +1,4 @@
-# EGCP471
-Senior design project
+## EGCP471 Senior design project
 
 connect board to wifi `nmtui`
 check wifi connection `nmcli connection show`
