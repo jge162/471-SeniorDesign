@@ -8,7 +8,7 @@ load file to board `mdt push PycharmProjects/InferenceCoral/main.py`
 runf script on board `python3 main.py`
 install rpi `sudo apt-get install python-rpi.gpio python3-rpi.gpio`
 `sudo apt-get update && sudo apt-get install python3-tk`
-
+to install GPIO pins`python3 -m pip install python-periphery`
 
 python3 -m pip install python-periphery
 
