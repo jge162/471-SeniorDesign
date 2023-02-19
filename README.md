@@ -10,7 +10,7 @@ install rpi `sudo apt-get install python-rpi.gpio python3-rpi.gpio`
 `sudo apt-get update && sudo apt-get install python3-tk`
 to install GPIO pins`python3 -m pip install python-periphery`
 
-##If while running periphery u get error do this
+## If while running periphery u get error do this
 `sudo apt-get update && sudo apt-get dist-upgrade`
 `sudo reboot now`
 
