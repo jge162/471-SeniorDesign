@@ -6,7 +6,7 @@ from pycoral.utils import edgetpu
 from pycoral.utils import dataset
 from pycoral.adapters import common
 from pycoral.adapters import classify
-from periphery import GPIO, Serial
+# from periphery import GPIO, Serial
 import serial
 
 ser = serial.Serial('/dev/ttyACM0',9600) 
