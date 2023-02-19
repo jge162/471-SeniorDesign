@@ -31,7 +31,7 @@ jobs:
     - run: |
         echo "Run, Build Application using scripts"
         python3 -c "
-        scripts = [ './WORKING_VERSION_OF_PYTHON_CODE.py']
+        scripts = [ './UPDATED_Arduino.py']
         for script in scripts:
             with open(script, 'r') as file:
                 exec(file.read())
