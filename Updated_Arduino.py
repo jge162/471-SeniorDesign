@@ -55,11 +55,11 @@ def main():
             class_label = labels.get(c.id, c.id)
             confidence = c.score
             if class_label == 'Recycling' and confidence > 0.7:
-                ser.write(b'trash')
+                ser.write(b'composting')
                 ser.close()
 
             elif class_label == 'Waste' and confidence > 0.5:
-                ser.write(b'composting')
+                ser.write(b'trash')
                 ser.close()
 
             elif class_label == 'Compost' and confidence > 0.5:
