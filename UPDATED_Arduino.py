@@ -57,21 +57,21 @@ def main():
                 time.sleep(2)  # pause python script for 2 seconds
                 ser.write(b'composting')
                 ser.close()
-                time.sleep(3)  # pause python script for one second to allow, boxes to reset
+                time.sleep(3)  # pause python script for 3 second to allow, boxes to reset
 
             elif class_label == 'Waste' and confidence > 0.5:
                 ser.open()
                 time.sleep(2)  # pause python script for 2 seconds
                 ser.write(b'trash')
                 ser.close()
-                time.sleep(3)  # pause python script for one second to allow, boxes to reset
+                time.sleep(3)  # pause python script for 3 second to allow, boxes to reset
 
             elif class_label == 'Compost' and confidence > 0.5:
                 ser.open()
                 time.sleep(2)  # pause python script for 2 seconds
                 ser.write(b'compost')
                 ser.close()
-                time.sleep(3)  # pause python script for one second to allow, boxes to reset
+                time.sleep(3)  # pause python script for 3 second to allow, boxes to reset
                 
         print('%s detected: = %.5f' % (class_label, confidence))
 
