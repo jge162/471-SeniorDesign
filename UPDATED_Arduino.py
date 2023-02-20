@@ -31,7 +31,6 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
 def main():
     # Call the setup function to initialize the GPIO pins and stepper motors.
-    """setup() uncomment when ready to connect Arduino"""
     # Loop over frames from the camera
     while True:
         # Capture the current frame from the camera
@@ -73,7 +72,7 @@ def main():
         cv2.imshow('Object Detection', frame)
 
         # Exit on 'q' key
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord('c'):
             break
 
     # Release the camera and close the window
