@@ -79,7 +79,7 @@ def main():
         cv2.putText(frame, "Confidence: %.2f" % confidence, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         cv2.imshow('Object Detection', frame)
 
-        # Exit on 'q' key
+        # Exit on 'c' key
         if cv2.waitKey(1) & 0xFF == ord('c'):
             break
 
