@@ -6,7 +6,6 @@ from pycoral.utils import edgetpu
 from pycoral.utils import dataset
 from pycoral.adapters import common
 from pycoral.adapters import classify
-# from periphery import GPIO, Serial
 import serial
 
 ser = serial.Serial('/dev/ttyACM0',9600) 
@@ -54,16 +53,25 @@ def main():
             class_label = labels.get(c.id, c.id)
             confidence = c.score
             if class_label == 'Recycling' and confidence > 0.7:
+                ser.open()
+                time.sleep(2)  # pause python script for 2 seconds
                 ser.write(b'composting')
                 ser.close()
+                time.sleep(3)  # pause python script for one second to allow, boxes to reset
 
             elif class_label == 'Waste' and confidence > 0.5:
+                ser.open()
+                time.sleep(2)  # pause python script for 2 seconds
                 ser.write(b'trash')
                 ser.close()
+                time.sleep(3)  # pause python script for one second to allow, boxes to reset
 
             elif class_label == 'Compost' and confidence > 0.5:
+                ser.open()
+                time.sleep(2)  # pause python script for 2 seconds
                 ser.write(b'compost')
                 ser.close()
+                time.sleep(3)  # pause python script for one second to allow, boxes to reset
                 
         print('%s detected: = %.5f' % (class_label, confidence))
 
