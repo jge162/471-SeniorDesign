@@ -1,7 +1,7 @@
 ## EGCP471 Senior design project
 
-connect board to wifi `nmtui`
-check wifi connection `nmcli connection show`
+- [] connect board to wifi `nmtui`
+- [] check wifi connection `nmcli connection show`
 can also pin `ping google.com`
 load file to board `mdt push PycharmProjects/InferenceCoral/main.py`
 runf script on board `python3 main.py`
