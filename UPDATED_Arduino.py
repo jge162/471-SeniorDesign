@@ -1,3 +1,4 @@
+
 import os
 import pathlib
 import time
@@ -11,8 +12,8 @@ import serial
 
 # Specify the TensorFlow model, labels, and camera device
 script_dir = pathlib.Path(__file__).parent.absolute()
-model_file = os.path.join(script_dir, '2-17model.tflite')
-label_file = os.path.join(script_dir, '2-17labels.txt')
+model_file = os.path.join(script_dir, 'Senior/model_edgetpu.tflite')
+label_file = os.path.join(script_dir, 'Senior/labels.txt')
 device = 1
 width = 640
 height = 480
@@ -28,8 +29,8 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
 
 def main():
-    # Call the setup function to initialize the GPIO pins and stepper motors.
     # Loop over frames from the camera
+
     while True:
         # Capture the current frame from the camera
         ret, frame = cap.read()
@@ -41,7 +42,6 @@ def main():
 
         # Pass the resized frame to the interpreter
         common.set_input(interpreter, rgb)
-
         # Run an inference
         interpreter.invoke()
         classes = classify.get_classes(interpreter, top_k=1)
@@ -51,31 +51,35 @@ def main():
         for c in classes:
             class_label = labels.get(c.id, c.id)
             confidence = c.score
-            if class_label == 'SodaCan' and confidence > 0.7:
-                ser = serial.Serial('/dev/ttyACM0',9600) 
-                time.sleep(2)  # pause python script for 2 seconds
-                ser.write(b'composting')
-                ser.close()
-                time.sleep(3)  # pause python script for 3 second to allow, boxes to reset
+            print('%s detected: %.2f%%' % (class_label, confidence * 100))
 
-            elif class_label == 'Water Bottle' and confidence > 0.5:
-                ser = serial.Serial('/dev/ttyACM0',9600) 
-                time.sleep(2)  # pause python script for 2 seconds
-                ser.write(b'trash')
-                ser.close()
-                time.sleep(3)  # pause python script for 3 second to allow, boxes to reset
+            if class_label == 'Toilet Paper' and confidence * 100 >= 99:
+                print("HERE IS BASE CASE DO NOTHING WITH ARDUINO")
 
-            elif class_label == 'Paper plate' and confidence > 0.5:
-                ser = serial.Serial('/dev/ttyACM0',9600) 
-                time.sleep(2)  # pause python script for 2 seconds
-                ser.write(b'compost')
+            elif class_label == 'SodaCan' and confidence * 100 >= 99.60:
+                print("Trigger Arduino to recycle SodaCan")
+                ser = serial.Serial('/dev/ttyACM0', 9600)
+                ser.write(b'trash\n')
+                time.sleep(3)
                 ser.close()
-                time.sleep(3)  # pause python script for 3 second to allow, boxes to reset
-                
-        print('%s detected: = %.5f' % (class_label, confidence))
 
-        # Display the frame with the confidence value
-        cv2.putText(frame, "Confidence: %.2f" % confidence, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            elif class_label == 'Water Bottle' and confidence * 100 >= 99:
+                print("Trigger Arduino to recycle Water Bottle")
+                ser = serial.Serial('/dev/ttyACM0', 9600)
+                ser.write(b'compost\n')
+                ser.close()
+
+            elif class_label == 'Paper plate' and confidence * 100 >= 99:
+                print("Trigger Arduino to trash Paper plate")
+                ser = serial.Serial('/dev/ttyACM0', 9600)
+                ser.write(b'composting\n')
+                ser.close()
+
+            # time.sleep(0.2)  # slowdown camera
+
+        # Display the frame with the confidence value if Coral is connected to a monitor
+        cv2.putText(frame, "Confidence: %.3f%%" % (confidence * 100), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                    (0, 0, 255), 2)
         cv2.imshow('Object Detection', frame)
 
         # Exit on 'c' key
