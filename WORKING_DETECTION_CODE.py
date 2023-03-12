@@ -1,3 +1,14 @@
+# scp /Users/csuftitan/PycharmProjects/pythonProject2/main.py mendel@192.168.100.2:/home/mendel
+# ssh mendel@192.168.100.2
+# sudo passwd mendel
+# sudo nano /etc/ssh/sshd_config
+"""
+PasswordAuthentication yes
+ChallengeResponseAuthentication no
+UsePAM yes
+"""
+# sudo systemctl restart sshd
+
 import os
 import pathlib
 import time
