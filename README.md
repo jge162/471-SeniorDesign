@@ -1,20 +1,5 @@
 ## EGCP471 Senior design project
 
-
-"""
-
-scp /Users/csuftitan/Downloads/ngrok-v3-stable-linux-amd64.tgz mendel@192.168.100.2:/home/mendel
-
-sudo tar xvzf ~/Downloads/ngrok-v3-stable-linux-amd64.tgz -C /usr/local/bin
-
-curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
-
-ngrok config add-authtoken 2MwRUF5A9ahpdmsatjlHkqQGEYE_2r2cjHWeoabJqcARNWQSi
-
-ngrok http 5000
-
-"""
-
 - [x] connect board to wifi `nmtui`
 - [x] check wifi connection `nmcli connection show`
 - [x] can also pin `ping google.com`
