@@ -1,6 +1,0 @@
-0 Water Bottle
-1 SodaCan
-2 Mask
-3 Paper Plate
-4 Disposable Cup
-5 Toilet Paper
