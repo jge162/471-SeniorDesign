@@ -229,7 +229,7 @@ if __name__ == '__main__':
 git commands to use -> 
 
 cp -r /home/mendel/captured_images /home/mendel/Senior/ 
-Cd Senior
+cd Senior
 git add .
 git commit -m "Added captured images"
 git push origin main
