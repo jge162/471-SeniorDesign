@@ -8,7 +8,6 @@ ChallengeResponseAuthentication no
 UsePAM yes
 """
 # sudo systemctl restart sshd
-
 import os
 import pathlib
 import time
@@ -17,23 +16,9 @@ from pycoral.utils import edgetpu
 from pycoral.utils import dataset
 from pycoral.adapters import common
 from pycoral.adapters import classify
-from flask import Flask, Response, render_template
+from flask import Flask, Response, render_template, request
 import serial
-import threading
-from periphery import GPIO
-from time import time, sleep
-
-"""
-# Set up the GPIO pin for the LED
-led = GPIO("/dev/gpiochip2", 9, "out")  # P16_out
-print("LED OK")
-# Initialize the ultrasonic sensor
-echo_pin = GPIO("/dev/gpiochip4", 12, "in")
-trigger_pin = GPIO("/dev/gpiochip4", 10, "out")
-print("Sensor OK")
-trigger_pin.write(False)
-sleep(2)
-"""
+import image_capture2
 
 # Specify the TensorFlow model, labels, and camera device
 script_dir = pathlib.Path(__file__).parent.absolute()
@@ -59,9 +44,6 @@ detected_message = ""  # empty string to hold messages
 
 
 def gen_frames():
-    # Call the setup function to initialize the GPIO pins and stepper motors.
-    # Loop over frames from the camera
-    # global message
     global detected_message
     camera_paused = False
     pause_start_time = None  # Initialize pause_start_time to None
@@ -104,6 +86,7 @@ def gen_frames():
                     # ser.write(b'trash')
                     detected_message = "Trigger Arduino for Waste."
                     time.sleep(3)
+                    detected_message = "Sorting complete"
                 # Exit the loop to prevent multiple instances of triggering
                 break
 
@@ -117,6 +100,7 @@ def gen_frames():
                     # Trigger the recycling process
                     # ser.write(b'recycle')
                     detected_message = "Trigger Arduino for recycling."
+                    image_capture2.capture_image()
                     time.sleep(3)
 
                 # Exit the loop to prevent multiple instances of triggering
@@ -199,56 +183,66 @@ def message_stream_route():
     return Response(message_stream(), content_type='text/event-stream')
 
 
+@app.route('/capture_problem_image', methods=['POST'])
+def capture_problem_image():
+    global cap
+    print("Received capture_problem_image request")
+
+    # Capture the current frame from the camera
+    ret, frame = cap.read()
+
+    # Get the filename from the request
+    data = request.get_json()
+    filename = data.get('filename', f"problem_{int(time.time())}.jpg")
+
+    # Save the frame as an image
+    image_file = os.path.join(script_dir, 'captured_images', filename)
+    cv2.imwrite(image_file, frame)
+
+    return {'status': 'success', 'message': f'Image captured and saved as {filename}.'}
+
+
+@app.route('/capture_sort_image', methods=['POST'])
+def capture_sort_image():
+    global cap
+    print("Received capture_sort_image request")
+
+    # Capture the current frame from the camera
+    ret, frame = cap.read()
+
+    # Get the filename from the request
+    data = request.get_json()
+    filename = data.get('filename', f"sort.jpg")
+
+    # Save the frame as an image
+    image_file = os.path.join(script_dir, 'captured_images', filename)
+    cv2.imwrite(image_file, frame)
+
+    return {'status': 'success', 'message': f'Image captured and saved as {filename}.'}
+
+
 if __name__ == '__main__':
     # Start the Flask app
     app.run(host='0.0.0.0', debug=False)
 
+"""
+git commands to use -> 
+
+cp -r /home/mendel/captured_images /home/mendel/Senior/ 
+Cd Senior
+git add .
+git commit -m "Added captured images"
+git push origin main
 
 """
-while True:
-    # Send a 10us pulse to trigger the sensor
-    trigger_pin.write(True)
-    sleep(0.00001)
-    trigger_pin.write(False)
-    # print("Trigger setup")
-    # Wait for the echo pin to go high
-    pause_start_time = time()
-    while echo_pin.read() == 0:
-        if time() - pause_start_time > 1.0:
-            # If the echo pin doesn't go high within 1 second, break the loop
-            break
-    else:
-        # Record the start time if the echo pin went high
-        pulse_start = time()
 
-        # Wait for the echo pin to go low
-        while echo_pin.read() == 1:
-            pass
-
-        # Record the end time when the echo pin went low
-        pulse_end = time()
-
-        # Calculate the pulse duration and the distance
-        pulse_duration = pulse_end - pulse_start
-        distance = pulse_duration * 17150
-
-        # Check if a human is detected (distance < 100cm)
-        if distance >= 65 or distance == 0:
-            # Turn off the LED
-            led.write(False)
-            print("No human detected")
-        else:
-            # Turn on the LED
-            led.write(True)
-            print("Detected", distance, "cm")
-            # Call the setup function to initialize the GPIO pins and stepper motors.
-            # Loop over frames from the camera
-            camera_paused = False
-            pause_start_time = None  # Initialize pause_start_time to None
-            while True:
-                # Capture the current frame from the camera
-                ret, frame = cap.read()
 """
+to update after changing the model use this
+
+git pull origin main
+
+"""
+
 
 """ 
 <!DOCTYPE html>
