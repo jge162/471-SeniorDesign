@@ -248,13 +248,23 @@ git pull origin main
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Camera Streaming</title>
-  </head>
-  <body>
-    <h1>Camera Streaming</h1>
-    <img src="{{ url_for('video_feed') }}">
-  </body>
-</html>
+    <title>Automatic Waste Sorter</title>
+    <style>
+      #message {
+        font-weight: bold;
+        color: red;
+      }
+    </style>
+    <script>
+      window.onload = function() {
+        const source = new EventSource("/message_stream");
+        source.onmessage = function(event) {
+          const message = document.getElementById("message");
+          message.innerHTML = event.data;
+        };
+      };
+    </script>
+
 """
 
 """
