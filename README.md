@@ -18,7 +18,7 @@
 
 - [x] [Connect to dev board serially with mac](https://coral.ai/docs/dev-board/serial-console/#connect-with-macos)
 
-![Poster for project](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
+![Poster for project expos](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
 
 https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-84d5-363eaad962af.mov
 
