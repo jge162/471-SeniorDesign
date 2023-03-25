@@ -26,7 +26,7 @@ interpreter.allocate_tensors()
 cap = cv2.VideoCapture(device)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-# ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -69,30 +69,34 @@ def gen_frames():
             elif class_label == 'Waste' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Trigger Arduino for Waste")
+                detected_message = "Trigger Arduino for Waste"
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
                     # Trigger the Waste process
                     image_capture2.capture_image()
-                    # ser.write(b'trash')
-                    detected_message = "Trigger Arduino for Waste."
-                    time.sleep(3)
+                    ser.write(b'trash')
+                    detected_message = "Sorting now..."
+                    time.sleep(2)
                     detected_message = "Sorting complete"
+                    time.sleep(1)
                 # Exit the loop to prevent multiple instances of triggering
                 break
 
             elif class_label == 'Recycling' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Trigger Arduino for recycle")
-                # print('%s detected trigger Arduino : = %.5f' % (class_label, confidence))
+                detected_message = "Trigger Arduino for recycling"
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
                     # Trigger the recycling process
                     image_capture2.capture_image()
-                    # ser.write(b'recycle')
-                    detected_message = "Trigger Arduino for recycling."
-                    time.sleep(3)
+                    ser.write(b'recycle')
+                    detected_message = "Sorting now..."
+                    time.sleep(2)
+                    detected_message = "Sorting complete"
+                    time.sleep(1)
 
                 # Exit the loop to prevent multiple instances of triggering
                 break
@@ -100,14 +104,17 @@ def gen_frames():
             elif class_label == 'Compost' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Compost Trigger Arduino ")
+                detected_message = "Trigger Arduino for Compost"
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
                     # Trigger the Compost process
                     image_capture2.capture_image()
-                    # ser.write(b'compost')
-                    detected_message = "Trigger Arduino for Compost."
-                    time.sleep(3)
+                    ser.write(b'compost')
+                    detected_message = "Sorting now..."
+                    time.sleep(2)
+                    detected_message = "Sorting complete"
+                    time.sleep(1)
                 # Exit the loop to prevent multiple instances of triggering
                 break
 
@@ -143,7 +150,7 @@ def gen_frames():
     # Release the camera and close the window
     cap.release()
     cv2.destroyAllWindows()
-    # ser.close()
+    ser.close()
 
 
 def message_stream():
@@ -175,23 +182,17 @@ def message_stream_route():
     return Response(message_stream(), content_type='text/event-stream')
 
 
-@app.route('/capture_problem_image', methods=['POST'])
-def capture_problem_image():
-    global cap
-    print("Received capture_problem_image request")
+@app.route('/rename_sort_image', methods=['POST'])
+def rename_sort_image():
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    original_file_path = "Senior/captured_images/sort.jpg"
+    problem_file_path = f"Senior/captured_images/sort_problem_{timestamp}.jpg"
 
-    # Capture the current frame from the camera
-    ret, frame = cap.read()
-
-    # Get the filename from the request
-    data = request.get_json()
-    filename = data.get('filename', f"problem_{int(time.time())}.jpg")
-
-    # Save the frame as an image
-    image_file = os.path.join(script_dir, 'Senior/captured_images', filename)
-    cv2.imwrite(image_file, frame)
-
-    return {'status': 'success', 'message': f'Image captured and saved as {filename}.'}
+    if os.path.exists(original_file_path):
+        os.rename(original_file_path, problem_file_path)
+        return {'status': 'success', 'message': f'Image renamed to {problem_file_path}.'}
+    else:
+        return {'status': 'error', 'message': 'No image to rename.'}
 
 
 @app.route('/capture_sort_image', methods=['POST'])
