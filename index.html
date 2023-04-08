@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, height=device-height, user-scalable=yes, initial-scale=1, maximum-scale=5.0, minimum-scale=0.5" />
+	<body style="background-color:#478778;">
     <title>Automatic Waste Sorter</title>
     <style>
       #message {
         font-weight: bold;
         color: red;
-      }
+      }	  
+	</head>
     </style>
     <script>
       window.onload = function() {
@@ -19,9 +23,20 @@
     </script>
   </head>
   <body>
-    <h1>Automatic Waste Sorter</h1>
+    <center><h1><b>Automatic Waste Sorter</h1></b></center>
+	<center><hr>By: Jeremy Escobar, Duy Nguyen, Andrew Takayama, & Spencer Williams</hr>
+	<center><a href="https://github.com/jge162/471-SeniorDesign">Our Github Repository</a></center>
+	<center><hr><img src="C:\Users\AndrewTakayama\Desktop\Images\trash.png" border = "3"></center>
     <p id="message"></p>
     <img src="{{ url_for('video_feed') }}">
-    <p>Battery: 80%</p>
+	<center><table border="1" cellpadding="5" cellspacing="0"></center>
+		<tr>
+			<th>Battery</th>
+			<th>Trash Level</th>
+		</tr>
+		<tr>
+			<td>87%</td>
+			<td>50%</td>
+		</tr>
   </body>
 </html>
