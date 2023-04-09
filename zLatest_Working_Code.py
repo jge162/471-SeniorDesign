@@ -27,7 +27,7 @@ interpreter.allocate_tensors()
 cap = cv2.VideoCapture(device)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-# ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # Initialize the Flask app
 app = Flask(__name__)  # will only run if you plug ip address into a web_browser
@@ -137,7 +137,7 @@ def gen_frames():
     # Release the camera, close the window and close serial connection
     cap.release()
     cv2.destroyAllWindows()
-    # ser.close()
+    ser.close()
 
 
 def gen_video_feed():
