@@ -11,12 +11,11 @@ import serial
 import image_capture2
 import threading
 
-
 # Specify the TensorFlow model, labels, and camera device
 script_dir = pathlib.Path(__file__).parent.absolute()
 model_file = os.path.join(script_dir, 'Senior/model_edgetpu.tflite')
 label_file = os.path.join(script_dir, 'Senior/labels.txt')
-device = 1
+device = 0
 width = 640
 height = 480
 
@@ -28,17 +27,17 @@ interpreter.allocate_tensors()
 cap = cv2.VideoCapture(device)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-ser = serial.Serial('/dev/ttyACM0', 9600)
+# ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # Initialize the Flask app
-app = Flask(__name__)
+app = Flask(__name__)  # will only run if you plug ip address into a web_browser
 detected_message = ""  # empty string to hold messages
 
 
 def gen_frames():
-    global detected_message
-    camera_paused = False
-    pause_start_time = None  # Initialize pause_start_time to None
+    global detected_message  # initialize a global variable for detected message
+    camera_paused = False  # set boolean value to False by default
+    pause_start_time = None  # initialize pause_start_time to None
 
     while True:
         # Capture the current frame from the camera
@@ -76,13 +75,13 @@ def gen_frames():
                     # Pause the camera by setting the variable to True
                     camera_paused = True
                     # Trigger the Waste process
-                    image_capture2.capture_image()
                     ser.write(b'trash')
+                    image_capture2.capture_image()
                     detected_message = "Sorting now..."
                     time.sleep(2)
                     detected_message = "Sorting complete"
                     time.sleep(1)
-                # Exit the loop to prevent multiple instances of triggering
+                # Exit case back to loop
                 break
 
             elif class_label == 'Recycling' and confidence > 0.80:
@@ -92,15 +91,16 @@ def gen_frames():
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
+                    print("Pause camera for 3 seconds")
                     # Trigger the recycling process
-                    image_capture2.capture_image()
                     ser.write(b'recycle')
+                    image_capture2.capture_image()
                     detected_message = "Sorting now..."
                     time.sleep(2)
                     detected_message = "Sorting complete"
                     time.sleep(1)
 
-                # Exit the loop to prevent multiple instances of triggering
+                # Exit case back to loop
                 break
 
             elif class_label == 'Compost' and confidence > 0.80:
@@ -111,56 +111,33 @@ def gen_frames():
                     # Pause the camera by setting the variable to True
                     camera_paused = True
                     # Trigger the Compost process
-                    image_capture2.capture_image()
                     ser.write(b'compost')
+                    image_capture2.capture_image()
                     detected_message = "Sorting now..."
                     time.sleep(2)
                     detected_message = "Sorting complete"
                     time.sleep(1)
-                # Exit the loop to prevent multiple instances of triggering
+
+                # Exit case back to loop
                 break
-
-            # time.sleep(0.5)
-
-        # Convert the frame to JPG format
-        # 1 ret, buffer = cv2.imencode('.jpg', frame)
-        # 2 frame = buffer.tobytes()
-
-        # Yield the frame to the Flask app
-        # 3 yield (b'--frame\r\n'
-        # 4        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
         # If the camera is not paused, display the frame and check for user input
         if not camera_paused:
-            print('%s detected: = %.5f' % (class_label, confidence))
-            # Convert the frame to JPG format
+            pass   # placeholder, can add print statement if you want.
+            break  # break out of case, necessary to reach cap.release(), ser.close() etc...
 
-            # Exit on 'c' key
-            if cv2.waitKey(1) & 0xFF == ord('c'):
-                break
-
-        # If the camera is paused, wait for 3 seconds to resume
         else:
-            # Display a message indicating that the camera is paused
-            # cv2.putText(frame, "Camera paused. Waiting for 3 seconds to resume...", (10, 30),
-            #             cv2.FONT_HERSHEY_SIMPLEX,
-            #             1,
-            #             (0, 0, 255), 2)
-
+            # If the camera is paused, wait for 3 seconds to resume
             if not pause_start_time:
                 pause_start_time = time.time()
             elif time.time() - pause_start_time >= 3:
                 pause_start_time = None
-                camera_paused = False
+                camera_paused = False  # turn camera back on here, set pause = False
 
-        # Exit on 'c' key
-        if cv2.waitKey(1) & 0xFF == ord('c'):
-            break
-
-    # Release the camera and close the window
+    # Release the camera, close the window and close serial connection
     cap.release()
     cv2.destroyAllWindows()
-    ser.close()
+    # ser.close()
 
 
 def gen_video_feed():
@@ -172,15 +149,16 @@ def gen_video_feed():
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
 
-        # Yield the frame to the Flask app
+        # Yield the frame to the Flask app to see on web feed
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 
 def start_gen_frames():
+    # dedicated thread to run, sorting functionality
     gen_frames_thread = threading.Thread(target=gen_frames)
     gen_frames_thread.daemon = True
-    gen_frames_thread.start()
+    gen_frames_thread.start()  # start sorting once script is run here
 
 
 def message_stream():
@@ -202,7 +180,6 @@ def index():
 @app.route('/video_feed')
 def video_feed():
     # Stream the video feed from the camera
-    # return Response(gen_frames(),
     return Response(gen_video_feed(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
@@ -246,9 +223,8 @@ def capture_sort_image():
 
 
 if __name__ == '__main__':
-    # Start the Flask app
-    start_gen_frames()
-    app.run(host='0.0.0.0', debug=False)
+    start_gen_frames()  # auto start sorting function (dedicated thread)
+    app.run(host='0.0.0.0', debug=False)  # Start the Flask app by entering http into a webpage
 
 """
 git commands to use -> 
@@ -262,4 +238,3 @@ git push origin main
 to update after changing the model use this
 
 git pull origin main
-""" 
