@@ -9,6 +9,18 @@ from pycoral.adapters import classify
 from flask import Flask, Response, render_template, request
 import serial
 import image_capture2
+from periphery import GPIO
+
+# Set up the GPIO pin for the LED
+led = GPIO("/dev/gpiochip2", 9, "out")  # P16_out
+print("LED OK")
+# Initialize the ultrasonic sensor
+echo_pin = GPIO("/dev/gpiochip4", 12, "in")
+trigger_pin = GPIO("/dev/gpiochip4", 10, "out")
+print("Sensor OK")
+trigger_pin.write(False)
+time.sleep(2)
+
 
 # Specify the TensorFlow model, labels, and camera device
 script_dir = pathlib.Path(__file__).parent.absolute()
@@ -39,113 +51,155 @@ def gen_frames():
     pause_start_time = None  # Initialize pause_start_time to None
 
     while True:
-        # Capture the current frame from the camera
-        ret, frame = cap.read()
-
-        # Convert the frame to RGB format and resize it
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        size = common.input_size(interpreter)
-        rgb = cv2.resize(rgb, size)
-
-        # Pass the resized frame to the interpreter
-        common.set_input(interpreter, rgb)
-
-        # Run an inference
-        interpreter.invoke()
-        classes = classify.get_classes(interpreter, top_k=1)
-
-        # Print the result and check the class label and confidence score
-        labels = dataset.read_label_file(label_file)
-        for c in classes:
-            class_label = labels.get(c.id, c.id)
-            confidence = c.score
-            print('%s detected: = %.5f' % (class_label, confidence))
-            if class_label == 'Base' and confidence > 0.80:
-                # Check if the camera is already paused
-                print("Base case here do nothing")
-                time.sleep(1)
-                detected_message = "Base case here, do nothing."
-
-            elif class_label == 'Waste' and confidence > 0.80:
-                # Check if the camera is already paused
-                print("Trigger Arduino for Waste")
-                detected_message = "Trigger Arduino for Waste"
-                if not camera_paused:
-                    # Pause the camera by setting the variable to True
-                    camera_paused = True
-                    # Trigger the Waste process
-                    image_capture2.capture_image()
-                    ser.write(b'trash')
-                    detected_message = "Sorting now..."
-                    time.sleep(2)
-                    detected_message = "Sorting complete"
-                    time.sleep(1)
-                # Exit the loop to prevent multiple instances of triggering
+      
+        # Send a 10us pulse to trigger the sensor
+        trigger_pin.write(True)
+        sleep(0.00001)
+        trigger_pin.write(False)
+        # print("Trigger setup")
+        # Wait for the echo pin to go high
+        pause_start_time = time.time()
+        
+        while echo_pin.read() == 0:
+            if time.time() - pause_start_time > 1.0:
+                # If the echo pin doesn't go high within 1 second, break the loop
                 break
-
-            elif class_label == 'Recycling' and confidence > 0.80:
-                # Check if the camera is already paused
-                print("Trigger Arduino for recycle")
-                detected_message = "Trigger Arduino for recycling"
-                if not camera_paused:
-                    # Pause the camera by setting the variable to True
-                    camera_paused = True
-                    # Trigger the recycling process
-                    image_capture2.capture_image()
-                    ser.write(b'recycle')
-                    detected_message = "Sorting now..."
-                    time.sleep(2)
-                    detected_message = "Sorting complete"
-                    time.sleep(1)
-
-                # Exit the loop to prevent multiple instances of triggering
-                break
-
-            elif class_label == 'Compost' and confidence > 0.80:
-                # Check if the camera is already paused
-                print("Compost Trigger Arduino ")
-                detected_message = "Trigger Arduino for Compost"
-                if not camera_paused:
-                    # Pause the camera by setting the variable to True
-                    camera_paused = True
-                    # Trigger the Compost process
-                    image_capture2.capture_image()
-                    ser.write(b'compost')
-                    detected_message = "Sorting now..."
-                    time.sleep(2)
-                    detected_message = "Sorting complete"
-                    time.sleep(1)
-                # Exit the loop to prevent multiple instances of triggering
-                break
-
-            # time.sleep(0.5)
-
-        # Convert the frame to JPG format
-        ret, buffer = cv2.imencode('.jpg', frame)
-        frame = buffer.tobytes()
-
-        # Yield the frame to the Flask app
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-        # If the camera is not paused, display the frame and check for user input
-        if not camera_paused:
-            # Exit on 'c' key
-            if cv2.waitKey(1) & 0xFF == ord('c'):
-                break
-
-        # If the camera is paused, wait for 3 seconds to resume
         else:
-            # Wait for 3 seconds
-            if not pause_start_time:
-                pause_start_time = time.time()
-            elif time.time() - pause_start_time >= 3:
-                pause_start_time = None
+            # Record the start time if the echo pin went high
+            pulse_start = time.time()
+
+            # Wait for the echo pin to go low
+            while echo_pin.read() == 1:
+                pass
+
+            # Record the end time when the echo pin went low
+            pulse_end = time.time()
+
+            # Calculate the pulse duration and the distance
+            pulse_duration = pulse_end - pulse_start
+            distance = pulse_duration * 17150
+
+            # Check if a human is detected (distance < 100cm)
+            if distance >= 65 or distance == 0:
+                # Turn off the LED
+                led.write(False)
+                print("No human detected")
+            else:
+                # Turn on the LED
+                led.write(True)
+                print("Detected", distance, "cm")
+                # Call the setup function to initialize the GPIO pins and stepper motors.
+                # Loop over frames from the camera
                 camera_paused = False
 
-        # Exit on 'c' key
-        if cv2.waitKey(1) & 0xFF == ord('c'):
-            break
+                pause_start_time = None  # Initialize pause_start_time to None
+                # Capture the current frame from the camera
+                ret, frame = cap.read()
+
+                # Convert the frame to RGB format and resize it
+                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                size = common.input_size(interpreter)
+                rgb = cv2.resize(rgb, size)
+
+                # Pass the resized frame to the interpreter
+                common.set_input(interpreter, rgb)
+
+                # Run an inference
+                interpreter.invoke()
+                classes = classify.get_classes(interpreter, top_k=1)
+
+                # Print the result and check the class label and confidence score
+                labels = dataset.read_label_file(label_file)
+                for c in classes:
+                    class_label = labels.get(c.id, c.id)
+                    confidence = c.score
+                    print('%s detected: = %.5f' % (class_label, confidence))
+                    if class_label == 'Base' and confidence > 0.80:
+                        # Check if the camera is already paused
+                        print("Base case here do nothing")
+                        time.sleep(1)
+                        detected_message = "Base case here, do nothing."
+
+                    elif class_label == 'Waste' and confidence > 0.80:
+                        # Check if the camera is already paused
+                        print("Trigger Arduino for Waste")
+                        detected_message = "Trigger Arduino for Waste"
+                        if not camera_paused:
+                            # Pause the camera by setting the variable to True
+                            camera_paused = True
+                            # Trigger the Waste process
+                            image_capture2.capture_image()
+                            ser.write(b'trash')
+                            detected_message = "Sorting now..."
+                            time.sleep(2)
+                            detected_message = "Sorting complete"
+                            time.sleep(1)
+                        # Exit the loop to prevent multiple instances of triggering
+                        break
+
+                    elif class_label == 'Recycling' and confidence > 0.80:
+                        # Check if the camera is already paused
+                        print("Trigger Arduino for recycle")
+                        detected_message = "Trigger Arduino for recycling"
+                        if not camera_paused:
+                            # Pause the camera by setting the variable to True
+                            camera_paused = True
+                            # Trigger the recycling process
+                            image_capture2.capture_image()
+                            ser.write(b'recycle')
+                            detected_message = "Sorting now..."
+                            time.sleep(2)
+                            detected_message = "Sorting complete"
+                            time.sleep(1)
+
+                        # Exit the loop to prevent multiple instances of triggering
+                        break
+
+                    elif class_label == 'Compost' and confidence > 0.80:
+                        # Check if the camera is already paused
+                        print("Compost Trigger Arduino ")
+                        detected_message = "Trigger Arduino for Compost"
+                        if not camera_paused:
+                            # Pause the camera by setting the variable to True
+                            camera_paused = True
+                            # Trigger the Compost process
+                            image_capture2.capture_image()
+                            ser.write(b'compost')
+                            detected_message = "Sorting now..."
+                            time.sleep(2)
+                            detected_message = "Sorting complete"
+                            time.sleep(1)
+                        # Exit the loop to prevent multiple instances of triggering
+                        break
+
+                    # time.sleep(0.5)
+
+                # Convert the frame to JPG format
+                ret, buffer = cv2.imencode('.jpg', frame)
+                frame = buffer.tobytes()
+
+                # Yield the frame to the Flask app
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+                # If the camera is not paused, display the frame and check for user input
+                if not camera_paused:
+                    # Exit on 'c' key
+                    if cv2.waitKey(1) & 0xFF == ord('c'):
+                        break
+
+                # If the camera is paused, wait for 3 seconds to resume
+                else:
+                    # Wait for 3 seconds
+                    if not pause_start_time:
+                        pause_start_time = time.time()
+                    elif time.time() - pause_start_time >= 3:
+                        pause_start_time = None
+                        camera_paused = False
+
+                # Exit on 'c' key
+                if cv2.waitKey(1) & 0xFF == ord('c'):
+                    break
 
     # Release the camera and close the window
     cap.release()
