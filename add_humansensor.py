@@ -46,7 +46,7 @@ def gen_frames():
     pause_start_time = None  # Initialize pause_start_time to None
 
     while True:
-
+        ser.write(b'welcome')
         # Send a 10us pulse to trigger the sensor
         trigger_pin.write(True)
         sleep(0.00001)
