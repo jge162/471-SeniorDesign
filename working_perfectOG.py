@@ -81,10 +81,7 @@ def gen_frames():
 
             # Check if a human is detected (distance < 100cm)
             if distance >= 65 or distance == 0:
-                # Turn off the LED
-                led.write(False)
-                print("No human detected")
-            else:
+          
                 # Turn on the LED
                 led.write(True)
                 print("Detected", distance, "cm")
@@ -200,7 +197,11 @@ def gen_frames():
                 # Exit on 'c' key
                 if cv2.waitKey(1) & 0xFF == ord('c'):
                     break
-
+           else:
+               # Turn off the LED
+                led.write(False)
+                print("No human detected")
+            
     # Release the camera and close the window
     cap.release()
     cv2.destroyAllWindows()
