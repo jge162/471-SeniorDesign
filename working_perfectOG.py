@@ -54,7 +54,7 @@ def gen_frames():
       
         # Send a 10us pulse to trigger the sensor
         trigger_pin.write(True)
-        sleep(0.00001)
+        time.sleep(0.00001)
         trigger_pin.write(False)
         # print("Trigger setup")
         # Wait for the echo pin to go high
