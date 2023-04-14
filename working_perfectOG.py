@@ -80,7 +80,7 @@ def gen_frames():
             distance = pulse_duration * 17150
 
             # Check if a human is detected (distance < 100cm)
-            if distance >= 65 or distance == 0:
+            if distance >= 0 and distance <= 60:
           
                 # Turn on the LED
                 led.write(True)
