@@ -26,7 +26,7 @@ time.sleep(2)
 script_dir = pathlib.Path(__file__).parent.absolute()
 model_file = os.path.join(script_dir, 'Senior/model_edgetpu.tflite')
 label_file = os.path.join(script_dir, 'Senior/labels.txt')
-device = 0
+device = 1
 width = 640
 height = 480
 
