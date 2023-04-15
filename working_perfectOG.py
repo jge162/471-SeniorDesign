@@ -65,7 +65,7 @@ def gen_frames():
 
             # Wait for the echo pin to go low
         while echo_pin.read() == 1:
-            pulse_end = time.time();
+            pulse_end = time.time()
 
          
 
