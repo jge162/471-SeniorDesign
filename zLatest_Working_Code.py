@@ -1,3 +1,14 @@
+# scp /Users/csuftitan/PycharmProjects/pythonProject2/main.py mendel@192.168.100.2:/home/mendel
+# ssh mendel@192.168.100.2
+# sudo passwd mendel
+# sudo nano /etc/ssh/sshd_config
+"""
+PasswordAuthentication yes
+ChallengeResponseAuthentication no
+UsePAM yes
+"""
+# sudo systemctl restart sshd
+
 import os
 import pathlib
 import time
@@ -6,10 +17,13 @@ from pycoral.utils import edgetpu
 from pycoral.utils import dataset
 from pycoral.adapters import common
 from pycoral.adapters import classify
-from flask import Flask, Response, render_template, request
 import serial
-import image_capture2
-import threading
+from periphery import GPIO
+from flask import Flask, Response, render_template, request
+from threading import Thread
+
+
+button = GPIO("/dev/gpiochip0", 6, "in")
 
 # Specify the TensorFlow model, labels, and camera device
 script_dir = pathlib.Path(__file__).parent.absolute()
@@ -27,19 +41,40 @@ interpreter.allocate_tensors()
 cap = cv2.VideoCapture(device)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-ser = serial.Serial('/dev/ttyACM0', 9600)
+# ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # Initialize the Flask app
-app = Flask(__name__)  # will only run if you plug ip address into a web_browser
+app = Flask(__name__)
 detected_message = ""  # empty string to hold messages
 
 
-def gen_frames():
-    global detected_message  # initialize a global variable for detected message
-    camera_paused = False  # set boolean value to False by default
-    pause_start_time = None  # initialize pause_start_time to None
-
+def main():
+    global detected_message
+    # Call the setup function to initialize the GPIO pins and stepper motors.
+    # Loop over frames from the camera
+    camera_paused = False
+    pause_start_time = None  # Initialize pause_start_time to None
     while True:
+
+        if button.read():  # if (button press == true) enter case
+            print(button.read())
+            # print True in console
+            timestamp = time.strftime("%m%d%Y-%H%M%S")
+            # assign value of timestamp
+            original_file_path = "Senior/captured_images/sort.jpg"
+            # define OG file here
+            problem_file_path = f"Senior/captured_images/sort_problem_{timestamp}.jpg"
+            # define new file path here
+            if os.path.exists(original_file_path):
+                # if OG file exist enter case else print failed
+                os.rename(original_file_path, problem_file_path)
+                # rename OG file here
+                print("Successfully renamed file")
+                # print success
+            else:
+                print("Failed to rename file")
+                # print failed
+
         # Capture the current frame from the camera
         ret, frame = cap.read()
 
@@ -60,84 +95,101 @@ def gen_frames():
         for c in classes:
             class_label = labels.get(c.id, c.id)
             confidence = c.score
-            print('%s detected: = %.5f' % (class_label, confidence))
+            print('%s detected: Confidence = %.2f%%' % (class_label, confidence * 100))
+            detected_message = ('%s detected: = Confidence %.2f%%' % (class_label, confidence * 100))
+
             if class_label == 'Base' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Base case here do nothing")
-                time.sleep(1)
-                detected_message = "Base case here, do nothing."
+                # detected_message = "Base case here, do nothing."
 
             elif class_label == 'Waste' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Trigger Arduino for Waste")
-                detected_message = "Trigger Arduino for Waste"
+                # detected_message = "Trigger Arduino for Waste."
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
-                    # Trigger the Waste process
-                    ser.write(b'trash')
-                    image_capture2.capture_image()
-                    detected_message = "Sorting now..."
-                    time.sleep(2)
-                    detected_message = "Sorting complete"
-                    time.sleep(1)
-                # Exit case back to loop
-                break
+                    # Trigger the recycling process
+                    if ret and frame is not None:
+                        cv2.imwrite('Senior/captured_images/sort.jpg', frame)
+                        print("image captured sort.jpg")
+                    # time.sleep(2) # remove this Spencer
+                    # ser.write(b'trash')
+                    time.sleep(3)
 
+                # Exit the loop to prevent multiple instances of triggering
+                break
             elif class_label == 'Recycling' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Trigger Arduino for recycle")
-                detected_message = "Trigger Arduino for recycling"
+                # detected_message = "Trigger Arduino for recycle."
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
-                    print("Pause camera for 3 seconds")
                     # Trigger the recycling process
-                    ser.write(b'recycle')
-                    image_capture2.capture_image()
-                    detected_message = "Sorting now..."
-                    time.sleep(2)
-                    detected_message = "Sorting complete"
-                    time.sleep(1)
+                    if ret and frame is not None:
+                        cv2.imwrite('Senior/captured_images/sort.jpg', frame)
+                        print("image captured sort.jpg")
+                    # time.sleep(2)
+                    # ser.write(b'recycle')
+                    time.sleep(3)
 
-                # Exit case back to loop
+                # Exit the loop to prevent multiple instances of triggering
                 break
 
             elif class_label == 'Compost' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Compost Trigger Arduino ")
-                detected_message = "Trigger Arduino for Compost"
+                # detected_message = "Trigger Arduino for Compost."
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
-                    # Trigger the Compost process
-                    ser.write(b'compost')
-                    image_capture2.capture_image()
-                    detected_message = "Sorting now..."
-                    time.sleep(2)
-                    detected_message = "Sorting complete"
-                    time.sleep(1)
-
-                # Exit case back to loop
+                    # Trigger the recycling process
+                    if ret and frame is not None:
+                        cv2.imwrite('Senior/captured_images/sort.jpg', frame)
+                        print("image captured sort.jpg")
+                    # time.sleep(2)
+                    # ser.write(b'compost')
+                    time.sleep(3)
+                # Exit the loop to prevent multiple instances of triggering
                 break
+
+            time.sleep(0.25)
 
         # If the camera is not paused, display the frame and check for user input
         if not camera_paused:
-            pass   # placeholder, can add print statement if you want.
-            break  # break out of case, necessary to reach cap.release(), ser.close() etc...
+            # Display the frame with the confidence value
+            cv2.putText(frame, "Confidence: %.2f" % confidence, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.imshow('Object Detection', frame)
 
+            # Exit on 'c' key
+            if cv2.waitKey(1) & 0xFF == ord('c'):
+                break
+
+        # If the camera is paused, wait for a key press to resume
         else:
-            # If the camera is paused, wait for 3 seconds to resume
+            # Display a message indicating that the camera is paused
+            cv2.putText(frame, "Camera paused. Waiting for 3 seconds to resume...", (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
+                        1,
+                        (0, 0, 255), 2)
+            cv2.imshow('Object Detection', frame)
+
+            # Wait for 3 seconds
             if not pause_start_time:
                 pause_start_time = time.time()
             elif time.time() - pause_start_time >= 3:
                 pause_start_time = None
-                camera_paused = False  # turn camera back on here, set pause = False
+                camera_paused = False
 
-    # Release the camera, close the window and close serial connection
+            # Exit on 'c' key
+        if cv2.waitKey(1) & 0xFF == ord('c'):
+            break
+
+            # Release the camera and close the window
     cap.release()
     cv2.destroyAllWindows()
-    ser.close()
+    # ser.close()
 
 
 def gen_video_feed():
@@ -152,13 +204,6 @@ def gen_video_feed():
         # Yield the frame to the Flask app to see on web feed
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-
-def start_gen_frames():
-    # dedicated thread to run, sorting functionality
-    gen_frames_thread = threading.Thread(target=gen_frames)
-    gen_frames_thread.daemon = True
-    gen_frames_thread.start()  # start sorting once script is run here
 
 
 def message_stream():
@@ -190,52 +235,8 @@ def message_stream_route():
     return Response(message_stream(), content_type='text/event-stream')
 
 
-@app.route('/rename_sort_image', methods=['POST'])
-def rename_sort_image():
-    timestamp = time.strftime("%Y%m%d-%H%M%S")
-    original_file_path = "Senior/captured_images/sort.jpg"
-    problem_file_path = f"Senior/captured_images/sort_problem_{timestamp}.jpg"
-
-    if os.path.exists(original_file_path):
-        os.rename(original_file_path, problem_file_path)
-        return {'status': 'success', 'message': f'Image renamed to {problem_file_path}.'}
-    else:
-        return {'status': 'error', 'message': 'No image to rename.'}
-
-
-@app.route('/capture_sort_image', methods=['POST'])
-def capture_sort_image():
-    global cap
-    print("Received capture_sort_image request")
-
-    # Capture the current frame from the camera
-    ret, frame = cap.read()
-
-    # Get the filename from the request
-    data = request.get_json()
-    filename = data.get('filename', f"sort.jpg")
-
-    # Save the frame as an image
-    image_file = os.path.join(script_dir, 'Senior/captured_images', filename)
-    cv2.imwrite(image_file, frame)
-
-    return {'status': 'success', 'message': f'Image captured and saved as {filename}.'}
-
-
 if __name__ == '__main__':
-    start_gen_frames()  # auto start sorting function (dedicated thread)
-    app.run(host='0.0.0.0', debug=False)  # Start the Flask app by entering http into a webpage
+    main_thread = Thread(target=main)
+    main_thread.start()
+    app.run(host='0.0.0.0', debug=False)
 
-"""
-git commands to use -> 
-
-cp -r /home/mendel/captured_images /home/mendel/Senior/ 
-cd Senior
-git add .
-git commit -m "Added captured images"
-git push origin main
-
-to update after changing the model use this
-
-git pull origin main
-"""
