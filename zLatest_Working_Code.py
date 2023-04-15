@@ -21,7 +21,8 @@ import serial
 from periphery import GPIO
 from flask import Flask, Response, render_template, request
 from threading import Thread
-
+from queue import Queue
+import numpy as np
 
 button = GPIO("/dev/gpiochip0", 6, "in")
 
@@ -41,17 +42,29 @@ interpreter.allocate_tensors()
 cap = cv2.VideoCapture(device)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-# ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # Initialize the Flask app
 app = Flask(__name__)
 detected_message = ""  # empty string to hold messages
+detection_queue = Queue(maxsize=1)  # queue to hold most recent detection
+
+
+def draw_bounding_box(frame, class_label, confidence, color=(0, 255, 0), thickness=2):
+    height, width, _ = frame.shape
+    left = int(width / 4)
+    top = int(height / 4)
+    right = int(3 * width / 4)
+    bottom = int(3 * height / 4)
+
+    cv2.rectangle(frame, (left, top), (right, bottom), color, thickness)
+    label_text = f"{class_label}: {confidence:.2%}"
+    cv2.putText(frame, label_text, (left + 5, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+    return frame
 
 
 def main():
     global detected_message
-    # Call the setup function to initialize the GPIO pins and stepper motors.
-    # Loop over frames from the camera
     camera_paused = False
     pause_start_time = None  # Initialize pause_start_time to None
     while True:
@@ -96,17 +109,19 @@ def main():
             class_label = labels.get(c.id, c.id)
             confidence = c.score
             print('%s detected: Confidence = %.2f%%' % (class_label, confidence * 100))
-            detected_message = ('%s detected: = Confidence %.2f%%' % (class_label, confidence * 100))
+            detected_message = ('%s detected: Confidence = %.2f%%' % (class_label, confidence * 100))
+            detection = (class_label, confidence)
+            if detection_queue.full():
+                detection_queue.get_nowait()
+            detection_queue.put_nowait(detection)
 
             if class_label == 'Base' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Base case here do nothing")
-                # detected_message = "Base case here, do nothing."
 
             elif class_label == 'Waste' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Trigger Arduino for Waste")
-                # detected_message = "Trigger Arduino for Waste."
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
@@ -114,7 +129,6 @@ def main():
                     if ret and frame is not None:
                         cv2.imwrite('Senior/captured_images/sort.jpg', frame)
                         print("image captured sort.jpg")
-                    # time.sleep(2) # remove this Spencer
                     # ser.write(b'trash')
                     time.sleep(3)
 
@@ -123,7 +137,6 @@ def main():
             elif class_label == 'Recycling' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Trigger Arduino for recycle")
-                # detected_message = "Trigger Arduino for recycle."
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
@@ -131,8 +144,7 @@ def main():
                     if ret and frame is not None:
                         cv2.imwrite('Senior/captured_images/sort.jpg', frame)
                         print("image captured sort.jpg")
-                    # time.sleep(2)
-                    # ser.write(b'recycle')
+                    ser.write(b'recycle')
                     time.sleep(3)
 
                 # Exit the loop to prevent multiple instances of triggering
@@ -141,7 +153,6 @@ def main():
             elif class_label == 'Compost' and confidence > 0.80:
                 # Check if the camera is already paused
                 print("Compost Trigger Arduino ")
-                # detected_message = "Trigger Arduino for Compost."
                 if not camera_paused:
                     # Pause the camera by setting the variable to True
                     camera_paused = True
@@ -149,8 +160,7 @@ def main():
                     if ret and frame is not None:
                         cv2.imwrite('Senior/captured_images/sort.jpg', frame)
                         print("image captured sort.jpg")
-                    # time.sleep(2)
-                    # ser.write(b'compost')
+                    ser.write(b'compost')
                     time.sleep(3)
                 # Exit the loop to prevent multiple instances of triggering
                 break
@@ -189,13 +199,22 @@ def main():
             # Release the camera and close the window
     cap.release()
     cv2.destroyAllWindows()
-    # ser.close()
+    ser.close()
 
 
 def gen_video_feed():
+    global detection_queue
+    last_detection = None
     while True:
         # Capture the current frame from the camera
         ret, frame = cap.read()
+
+        if not detection_queue.empty():
+            last_detection = detection_queue.get_nowait()
+
+        if last_detection:
+            class_label, confidence = last_detection
+            frame = draw_bounding_box(frame, class_label, confidence)
 
         # Convert the frame to JPG format
         ret, buffer = cv2.imencode('.jpg', frame)
@@ -239,4 +258,3 @@ if __name__ == '__main__':
     main_thread = Thread(target=main)
     main_thread.start()
     app.run(host='0.0.0.0', debug=False)
-
