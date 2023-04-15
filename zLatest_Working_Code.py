@@ -129,7 +129,7 @@ def main():
                     if ret and frame is not None:
                         cv2.imwrite('Senior/captured_images/sort.jpg', frame)
                         print("image captured sort.jpg")
-                    # ser.write(b'trash')
+                    ser.write(b'trash')
                     time.sleep(3)
 
                 # Exit the loop to prevent multiple instances of triggering
