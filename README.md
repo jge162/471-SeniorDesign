@@ -19,6 +19,13 @@
 - [x] `git commit -m "message you want to describe commit"`
 - [x] `git push origin main`
 
+## Update index.html on coral
+
+- [x] `cd templates`
+- [x] `nano index.html` makes changes then do the following commands
+- [x] using `control k` will delete line by line code in index.html file
+- [x] then use `control o` to save file, then press enter to make changes
+- [x] lastly, use `control x` to exit nano editor (used with bin/bash normally)
 
 ![Poster for project expos](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
 
