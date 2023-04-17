@@ -1,0 +1,29 @@
+#back
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Automatic Waste Sorter</title>
+    <style>
+      #message {
+        font-weight: bold;
+        color: red;
+      }
+    </style>
+    <script>
+      window.onload = function() {
+        const source = new EventSource("/message_stream");
+        source.onmessage = function(event) {
+          const message = document.getElementById("message");
+          message.innerHTML = event.data;
+        };
+      };
+    </script>
+  </head>
+  <body>
+    <h1>Automatic Waste Sorter</h1>
+    <p id="message"></p>
+    <img src="{{ url_for('video_feed') }}">
+    <p>Battery: 80%</p>
+  </body>
+</html>
