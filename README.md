@@ -1,4 +1,4 @@
-## EGCP471 Senior design project
+# EGCP471 Senior design project
 
 - [x] use `mdt shell` to connect to coral via USB
 - [x] use `ssh mendel@192.168.100.2` to connect via SSH, then use password to connect. 
