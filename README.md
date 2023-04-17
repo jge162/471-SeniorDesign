@@ -34,8 +34,7 @@
 <br> </br>
 ![Poster for project expos](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
 
-<br> </br>
-
+### Demo, waste, recycle, compost. 
 https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-84d5-363eaad962af.mov
 
 
