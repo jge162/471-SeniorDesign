@@ -1,4 +1,4 @@
-# EGCP471 Senior design project
+# EGCP471 Senior design project.
 
 - [x] use `mdt shell` to connect to coral via USB
 - [x] use `ssh mendel@192.168.100.2` to connect via SSH, then use password to connect. 
@@ -12,18 +12,18 @@
 - [x] `sudo shutdown now`
 - [x] [Connect to dev board serially with mac](https://coral.ai/docs/dev-board/serial-console/#connect-with-macos)
 
-## Git commands
+## Git commands.
 
 - [x] `git config --global user.name "Your username"` setup username for Repo
 - [x] `git config --global user.email "Your email address"` setup account email
 - [x] `git remote set-url origin https://token@github.com/jge162/Senior.git` use this to enable git on Coral
-### After above has been completed does not need to be done again. Unless your token expires (repeat part 3)
+### After above has been completed does not need to be done again. Unless your token expires (repeat part 3).
 - [x] `git pull origin main` 
 - [x] `git add .`
 - [x] `git commit -m "message you want to describe commit"`
 - [x] `git push origin main`
 
-## Update index.html on Google Coral dev board
+## Update index.html on Google Coral dev board.
 
 - [x] `cd templates`
 - [x] `nano index.html` makes changes then do the following commands
@@ -34,7 +34,7 @@
 <br> </br>
 ![Poster for project expos](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
 
-### Demo, waste, recycle, compost. 
+### Demo, waste, recycle, compost using object detection. 
 https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-84d5-363eaad962af.mov
 
 
