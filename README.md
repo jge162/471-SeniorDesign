@@ -31,6 +31,7 @@
 - [x] then use `control o` to save file, then press enter to make changes
 - [x] lastly, use `control x` to exit nano editor (used with bin/bash normally)
 
+<br> </br>
 ![Poster for project expos](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
 
 https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-84d5-363eaad962af.mov
