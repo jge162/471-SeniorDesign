@@ -23,7 +23,7 @@
 - [x] `git commit -m "message you want to describe commit"`
 - [x] `git push origin main`
 
-## Update index.html on coral
+## Update index.html on Google Coral dev board
 
 - [x] `cd templates`
 - [x] `nano index.html` makes changes then do the following commands
