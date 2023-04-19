@@ -89,28 +89,11 @@ def main():
             else:
                 print("Failed to rename file")  # print failed
 
-            # Send a 10us pulse to trigger the sensor
-        trigger_pin.write(True)
-        time.sleep(0.00001)
-        trigger_pin.write(False)
-        # print("Trigger setup")
-        # Wait for the echo pin to go high
-        pulse_start = 0
-        pulse_end = 0
-        while echo_pin.read() == 0:
-            pulse_start = time.time()
 
-            # Wait for the echo pin to go low
-        while echo_pin.read() == 1:
-            pulse_end = time.time()
-
-            # Calculate the pulse duration and the distance
-        pulse_duration = pulse_end - pulse_start
-        distance = pulse_duration * 17150
 
         # Check if a human is detected (distance < 100cm)
-        if 0 < distance <= 30:
-            print("Detected", distance, "cm")
+        #if 0 < distance <= 30:
+            #print("Detected", distance, "cm")
             # Call the setup function to initialize the GPIO pins and stepper motors.
             # Loop over frames from the camera
 
@@ -132,7 +115,27 @@ def main():
         # Print the result and check the class label and confidence score
         labels = dataset.read_label_file(label_file)
         class_detected = False
+        
+        
+                    # Send a 10us pulse to trigger the sensor
+        trigger_pin.write(True)
+        time.sleep(0.00001)
+        trigger_pin.write(False)
+        # print("Trigger setup")
+        # Wait for the echo pin to go high
+        pulse_start = 0
+        pulse_end = 0
+        while echo_pin.read() == 0:
+            pulse_start = time.time()
 
+            # Wait for the echo pin to go low
+        while echo_pin.read() == 1:
+            pulse_end = time.time()
+
+            # Calculate the pulse duration and the distance
+        pulse_duration = pulse_end - pulse_start
+        distance = pulse_duration * 17150
+        
         # Check if a human is detected (distance < 100cm)
         if 0 < distance <= 30:
             print("Detected", distance, "cm")
