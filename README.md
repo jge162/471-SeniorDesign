@@ -7,9 +7,6 @@ https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-
 
 
 
-<br> </br>
-
-
 ## Coral commands 
 
 - [x] use `mdt shell` to connect to coral via USB
