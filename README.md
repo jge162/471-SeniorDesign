@@ -26,7 +26,7 @@ https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-
 - [x] `git config --global user.name "Your username"` setup username for Repo
 - [x] `git config --global user.email "Your email address"` setup account email
 - [x] `git remote set-url origin https://token@github.com/jge162/Senior.git` use this to enable git on Coral
-### After above has been completed does not need to be done again. Unless your token expires (repeat part 3).
+#### After above has been completed does not need to be done again. Unless your token expires (repeat part 3).
 - [x] `git pull origin main` 
 - [x] `git add .`
 - [x] `git commit -m "message you want to describe commit"`
