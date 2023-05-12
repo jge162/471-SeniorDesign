@@ -2,18 +2,25 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=yes, initial-$
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=yes, initial-scale=1.0">
     <title>Automatic Waste Sorter</title>
     <style>
       body {
-        background-color: #478778;
-        text-align: center;
+        background-color: #FFFFFF;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        font-family: sans-serif;
       }
 
       #message {
         font-weight: bold;
         color: red;
-      }
+        font-size: 18px;
+     }
     </style>
     <script>
       window.onload = function() {
@@ -27,22 +34,21 @@
   </head>
   <body>
     <h1><b>Automatic Waste Sorter</b></h1>
-    <hr>By: Jeremy Escobar, Duy Nguyen, Andrew Takayama, & Spencer Williams</hr>
-    <a href="https://github.com/jge162/471-SeniorDesign">Our Github Repository</a>
-    <hr>
-    <img src="{{ url_for('static', filename='Untitled-1.png') }}" border="3">
+    <div class="names-and-repo">
+      <hr>By: Andrew Takayama, Duy Nguyen, Jeremy Escobar & Spencer Williams</hr>
+      <a href="https://github.com/jge162/471-SeniorDesign">Our Github Repository</a>
+      <hr>
+    </div>
     <p id="message"></p>
     <img src="{{ url_for('video_feed') }}">
     <table border="1" cellpadding="5" cellspacing="0" style="margin-left: auto; margin-right: auto;">
+        <br> <br>
       <tr>
-        <th>Battery</th>
         <th>Trash Level</th>
       </tr>
       <tr>
-        <td>87%</td>
         <td>50%</td>
       </tr>
     </table>
   </body>
 </html>
-
