@@ -3,8 +3,7 @@
 ![Poster for project expos](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
 
 ### Demo, waste, recycle, compost using object detection. 
-https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-84d5-363eaad962af.mov
-<br></br>
+https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-84d5-363eaad962af.mov<br></br>
 
 
 
