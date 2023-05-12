@@ -29,7 +29,7 @@ button = GPIO("/dev/gpiochip0", 6, "in")
 script_dir = pathlib.Path(__file__).parent.absolute()
 model_file = os.path.join(script_dir, 'Senior/model_edgetpu.tflite')
 label_file = os.path.join(script_dir, 'Senior/labels.txt')
-device = 0
+device = 1
 width = 640
 height = 480
 
@@ -41,25 +41,12 @@ interpreter.allocate_tensors()
 cap = cv2.VideoCapture(device)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-# ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600)
 
 # Initialize the Flask app
 app = Flask(__name__)
 detected_message = ""  # empty string to hold messages
 detection_queue = Queue(maxsize=1)  # queue to hold most recent detection
-
-
-def draw_bounding_box(frame, class_label, confidence, color=(0, 255, 0), thickness=2):
-    height, width, _ = frame.shape
-    left = int(width / 4)
-    top = int(height / 4)
-    right = int(3 * width / 4)
-    bottom = int(3 * height / 4)
-
-    cv2.rectangle(frame, (left, top), (right, bottom), color, thickness)
-    label_text = f"{class_label}: {confidence:.2%}"
-    cv2.putText(frame, label_text, (left + 5, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
-    return frame
 
 
 def main():
@@ -120,7 +107,7 @@ def main():
                     if ret and frame is not None:
                         cv2.imwrite('Senior/captured_images/sort.jpg', frame)
                         print("image captured sort.jpg")
-                    # ser.write(b'trash')
+                    ser.write(b'trash')
                     time.sleep(3)
 
                 # Exit the loop to prevent multiple instances of triggering
@@ -135,7 +122,7 @@ def main():
                     if ret and frame is not None:
                         cv2.imwrite('Senior/captured_images/sort.jpg', frame)
                         print("image captured sort.jpg")
-                    # ser.write(b'recycle')
+                    ser.write(b'recycle')
                     time.sleep(3)
 
                 # Exit the loop to prevent multiple instances of triggering
@@ -151,7 +138,7 @@ def main():
                     if ret and frame is not None:
                         cv2.imwrite('Senior/captured_images/sort.jpg', frame)
                         print("image captured sort.jpg")
-                    # ser.write(b'compost')
+                    ser.write(b'compost')
                     time.sleep(3)
                 # Exit the loop to prevent multiple instances of triggering
                 break
@@ -190,23 +177,13 @@ def main():
             # Release the camera and close the window
     cap.release()
     cv2.destroyAllWindows()
-    # ser.close()
+    ser.close()
 
 
 def gen_video_feed():
-    global detection_queue
-    last_detection = None
     while True:
         # Capture the current frame from the camera
         ret, frame = cap.read()
-
-        if not detection_queue.empty():
-            last_detection = detection_queue.get_nowait()
-
-        if last_detection:
-            class_label, confidence = last_detection
-            frame = draw_bounding_box(frame, class_label, confidence)
-
         # Convert the frame to JPG format
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
