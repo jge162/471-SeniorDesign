@@ -5,7 +5,6 @@
 ### Demo, waste, recycle, compost using object detection. 
 https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-84d5-363eaad962af.mov
 <br></br>
-https://github.com/jge162/471-SeniorDesign/assets/31228460/ecf4801f-5d35-4853-9228-2bf8693f731e
 
 
 
