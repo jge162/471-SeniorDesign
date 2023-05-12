@@ -4,7 +4,7 @@
 
 <br> </br>
 ### Demo, waste, recycle, compost using object detection. 
-https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-84d5-363eaad962af.mov
+https://github.com/jge162/471-SeniorDesign/assets/31228460/0b967d8c-b739-4792-8bc6-f9a21e2802c5
 
 ## Coral commands 
 
@@ -40,10 +40,5 @@ https://user-images.githubusercontent.com/31228460/218235257-5be39c9e-64e6-4411-
 - [x] lastly, use `control x` to exit nano editor (used with bin/bash normally)
 
 <br> </br>
-
-
-
-https://github.com/jge162/471-SeniorDesign/assets/31228460/0b967d8c-b739-4792-8bc6-f9a21e2802c5
-
 
 
