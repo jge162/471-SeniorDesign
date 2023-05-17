@@ -29,7 +29,6 @@ https://github.com/jge162/471-SeniorDesign/assets/31228460/0b967d8c-b739-4792-8b
 - [x] `git pull origin main` 
 - [x] `git add .`
 - [x] `git commit -m "message you want to describe commit"`
-- [x] `git push origin main`
 
 ## Update index.html on Google Coral dev board.
 
