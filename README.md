@@ -2,7 +2,7 @@
 
 <img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="700">
 
-<br> </br>
+<br>
 
 >[!IMPORTANT]\
 >Below is a demonstration of the proof of concept: Recycling, Composting, and Waste using [Object Detection](https://github.com/jge162/471-SeniorDesign).
