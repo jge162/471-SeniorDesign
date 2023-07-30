@@ -1,6 +1,6 @@
 # Computer Engineering Capstone Project!
 
-<img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="700">
+<img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="600">
 
 <br>
 
@@ -43,5 +43,4 @@ https://github.com/jge162/471-SeniorDesign/assets/31228460/0b967d8c-b739-4792-8b
 - [x] lastly, use `control x` to exit nano editor (used with bin/bash normally)
 
 <br> </br>
-
 
