@@ -1,4 +1,4 @@
-# EGCP471 Senior design project.
+# Computer Engineering Capstone Senior design project!
 
 <img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="700">
 
