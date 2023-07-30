@@ -1,8 +1,6 @@
 # EGCP471 Senior design project.
 
-![Poster for project expos](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
-
-<img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="900">
+<img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="700">
 
 <br> </br>
 
