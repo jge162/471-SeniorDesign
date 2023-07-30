@@ -2,6 +2,8 @@
 
 ![Poster for project expos](https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true)
 
+<img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="300">
+
 <br> </br>
 
 >[!IMPORTANT]\
