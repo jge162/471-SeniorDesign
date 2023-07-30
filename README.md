@@ -5,7 +5,7 @@
 <br> </br>
 
 >[!IMPORTANT]\
->Demo, waste, recycle, compost using object detection.
+>Below is Demonstration of proof of concept: Recyle, Compost and Waste **using object detection**.
 
 https://github.com/jge162/471-SeniorDesign/assets/31228460/0b967d8c-b739-4792-8bc6-f9a21e2802c5
 
