@@ -1,12 +1,12 @@
 # Computer Engineering Capstone Project!
 
-<img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="600">
-
-<br>
-
 >[!IMPORTANT]\
 >Below is a demonstration of the proof of concept:<br>
 >Recycling, Composting, and Waste using [Object Detection](https://github.com/jge162/471-SeniorDesign).
+
+<img src="https://github.com/jge162/471-SeniorDesign/blob/main/Poster.png?raw=true" alt="Poster for project expos" width="600">
+
+<br>
 
 https://github.com/jge162/471-SeniorDesign/assets/31228460/0b967d8c-b739-4792-8bc6-f9a21e2802c5
 
